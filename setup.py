@@ -16,6 +16,13 @@ pkgmeta = {}
 execfile(os.path.join(os.path.dirname(__file__),
          'pilkit', 'pkgmeta.py'), pkgmeta)
 
+install_requires = []
+
+try:
+    import importlib
+except ImportError:
+    install_requires.append('importlib')
+
 setup(
     name='pilkit',
     version=pkgmeta['__version__'],
@@ -34,8 +41,7 @@ setup(
         'Pillow==1.7.8',
     ],
     test_suite='nose.collector',
-    install_requires=[
-    ],
+    install_requires=install_requires,
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
