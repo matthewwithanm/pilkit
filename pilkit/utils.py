@@ -1,7 +1,7 @@
 import os
 import mimetypes
 import sys
-from .exceptions import UnknownExtensionError, UnknownFormatError
+from .exceptions import UnknownExtension, UnknownFormat
 from .lib import Image, ImageFile, StringIO
 
 
@@ -85,7 +85,7 @@ def extension_to_format(extension):
     if not format and _init_pil():
         format = _extension_to_format(extension)
     if not format:
-        raise UnknownExtensionError(extension)
+        raise UnknownExtension(extension)
     return format
 
 
@@ -101,7 +101,7 @@ def format_to_extension(format):
         if not extension and _init_pil():
             extension = _format_to_extension(format)
     if not extension:
-        raise UnknownFormatError(format)
+        raise UnknownFormat(format)
     return extension
 
 
@@ -109,7 +109,7 @@ def suggest_extension(name, format):
     original_extension = os.path.splitext(name)[1]
     try:
         suggested_extension = format_to_extension(format)
-    except UnknownFormatError:
+    except UnknownFormat:
         extension = original_extension
     else:
         if suggested_extension.lower() == original_extension.lower():
@@ -117,7 +117,7 @@ def suggest_extension(name, format):
         else:
             try:
                 original_format = extension_to_format(original_extension)
-            except UnknownExtensionError:
+            except UnknownExtension:
                 extension = suggested_extension
             else:
                 # If the formats match, give precedence to the original extension.

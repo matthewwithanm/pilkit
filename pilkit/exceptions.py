@@ -1,6 +1,6 @@
-class UnknownExtensionError(Exception):
+class UnknownExtension(Exception):
     pass
 
 
-class UnknownFormatError(Exception):
+class UnknownFormat(Exception):
     pass
