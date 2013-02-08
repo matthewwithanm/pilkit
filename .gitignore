@@ -1,0 +1,9 @@
+*.db
+*.egg*
+*.orig
+*.pyc
+.DS_Store
+.tox
+MANIFEST
+build
+dist
