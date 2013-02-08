@@ -4,7 +4,3 @@ class UnknownExtensionError(Exception):
 
 class UnknownFormatError(Exception):
     pass
-
-
-class ObjectNotFound(Exception):
-    pass

@@ -1,8 +1,7 @@
-from importlib import import_module
 import os
 import mimetypes
 import sys
-from .exceptions import UnknownExtensionError, UnknownFormatError, ObjectNotFound
+from .exceptions import UnknownExtensionError, UnknownFormatError
 from .lib import Image, ImageFile, StringIO
 
 
@@ -277,22 +276,3 @@ def prepare_image(img, format):
         save_kwargs['optimize'] = True
 
     return img, save_kwargs
-
-
-def get_by_qname(path, desc):
-    try:
-        dot = path.rindex('.')
-    except ValueError:
-        raise ObjectNotFound("%s isn't a %s module." % (path, desc))
-    module, objname = path[:dot], path[dot + 1:]
-    try:
-        mod = import_module(module)
-    except ImportError, e:
-        raise ObjectNotFound('Error importing %s module %s: "%s"' %
-                (desc, module, e))
-    try:
-        obj = getattr(mod, objname)
-        return obj
-    except AttributeError:
-        raise ObjectNotFound('%s module "%s" does not define "%s"'
-                % (desc[0].upper() + desc[1:], module, objname))
