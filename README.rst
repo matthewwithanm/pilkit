@@ -7,6 +7,8 @@ interface for performing manipulations on PIL images.
 **For the complete documentation on the latest stable version of PILKit, see**
 `PILKit on RTD`_.
 
+.. image:: https://api.travis-ci.org/matthewwithanm/pilkit.png
+
 .. _`PILKit on RTD`: http://pilkit.readthedocs.org
 
 
