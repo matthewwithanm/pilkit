@@ -32,6 +32,57 @@ Usage Overview
 ==============
 
 
+Processors
+----------
+
+The "pilkit.processors" module contains several classes for processing PIL
+images, which provide an easy to understand API:
+
+.. code-block:: python
+
+    from pilkit.processors import ResizeToFit
+
+    img = Image.open('/path/to/my/image.png')
+    processor = ResizeToFit(100, 100)
+    new_img = processor.process(img)
+
+A few of the included processors are:
+
+* ``ResizeToFit``
+* ``ResizeToFill``
+* ``SmartResize``
+* ``Adjust``
+* ``TrimBorderColor``
+* ``Transpose``
+
+There's also a ``ProcessorPipeline`` class for executing processors
+sequentially:
+
+.. code-block:: python
+
+    from pilkit.processors import ProcessorPipeline, ResizeToFit, Adjust
+
+    img = Image.open('/path/to/my/image.png')
+    processor = ProcessorPipeline([Adjust(color=0), ResizeToFit(100, 100)])
+    new_image = processor.process(img)
+
+
+Utilities
+---------
+
+In addition to the processors, PILKit contains a few utilities to ease the pain
+of working with PIL. Some examples:
+
+``prepare_image``
+    Prepares the image for saving to the provided format by doing some
+    common-sense conversions, including preserving transparency and quantizing.
+``save_image``
+    Wraps PIL's ``Image.save()`` method in order to gracefully handle PIL's
+    "Suspension not allowed here" errors, and (optionally) prepares the image
+    using ``prepare_image``
+
+Utilities are also included for converting between formats, extensions, and
+mimetypes.
 
 
 Community
