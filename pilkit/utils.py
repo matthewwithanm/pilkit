@@ -156,9 +156,10 @@ def save_image(img, outfile, format, options=None, autoconvert=True):
     except IOError:
         # PIL can have problems saving large JPEGs if MAXBLOCK isn't big enough,
         # So if we have a problem saving, we temporarily increase it. See
-        # http://github.com/jdriscoll/django-imagekit/issues/50
+        # http://github.com/jdriscoll/django-imagekit/issues/50 and
+        # https://github.com/jdriscoll/django-imagekit/issues/134
         old_maxblock = ImageFile.MAXBLOCK
-        ImageFile.MAXBLOCK = img.size[0] * img.size[1]
+        ImageFile.MAXBLOCK = max(img.size) ** 2
         try:
             img.save(outfile, format, **options)
         finally:
