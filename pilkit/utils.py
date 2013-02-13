@@ -7,6 +7,9 @@ from .lib import Image, ImageFile, StringIO
 
 RGBA_TRANSPARENCY_FORMATS = ['PNG']
 PALETTE_TRANSPARENCY_FORMATS = ['PNG', 'GIF']
+DEFAULT_EXTENSIONS = {
+    'JPEG': '.jpg',
+}
 
 
 def img_to_fobj(img, format, autoconvert=True, **options):
@@ -56,8 +59,16 @@ def _extension_to_format(extension):
 
 def _format_to_extension(format):
     if format:
+        format = format.upper()
+        if format in DEFAULT_EXTENSIONS:
+            ext = DEFAULT_EXTENSIONS[format]
+
+            # It's not enough for an extension to be listed in
+            # ``DEFAULT_EXTENSIONS``, it must also be recognized by PIL.
+            if ext in Image.EXTENSION:
+                return ext
         for k, v in Image.EXTENSION.iteritems():
-            if v == format.upper():
+            if v == format:
                 return k
     return None
 
