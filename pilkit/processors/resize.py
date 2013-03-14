@@ -17,6 +17,7 @@ class Resize(object):
         self.height = height
 
     def process(self, img):
+        img = img.convert('RGBA')
         return img.resize((self.width, self.height), Image.ANTIALIAS)
 
 
