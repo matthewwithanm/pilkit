@@ -1,5 +1,6 @@
 from pilkit.lib import Image, ImageDraw
-from pilkit.processors import Resize, ResizeToFill, ResizeToFit, SmartCrop
+from pilkit.processors import (Resize, ResizeToFill, ResizeToFit, SmartCrop,
+                               SmartResize)
 from nose.tools import eq_, assert_true
 from .utils import create_image
 
@@ -59,3 +60,19 @@ def test_resize_antialiasing():
     color_count = len(filter(None, img.histogram()))
 
     assert_true(color_count > 2)
+
+
+def test_upscale():
+    """
+    Test that the upscale argument works as expected.
+
+    """
+
+    img = Image.new('RGB', (100, 100))
+
+    for P in [Resize, ResizeToFit, ResizeToFill, SmartResize]:
+        img2 = P(500, 500, upscale=True).process(img)
+        eq_(img2.size, (500, 500))
+
+        img2 = P(500, 500, upscale=False).process(img)
+        eq_(img2.size, (100, 100))

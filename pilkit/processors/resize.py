@@ -7,18 +7,22 @@ class Resize(object):
     Resizes an image to the specified width and height.
 
     """
-    def __init__(self, width, height):
+    def __init__(self, width, height, upscale=True):
         """
         :param width: The target width, in pixels.
         :param height: The target height, in pixels.
+        :param upscale: Should the image be enlarged if smaller than the dimensions?
 
         """
         self.width = width
         self.height = height
+        self.upscale = upscale
 
     def process(self, img):
-        img = img.convert('RGBA')
-        return img.resize((self.width, self.height), Image.ANTIALIAS)
+        if self.upscale or (self.width < img.size[0] and self.height < img.size[1]):
+            img = img.convert('RGBA')
+            img = img.resize((self.width, self.height), Image.ANTIALIAS)
+        return img
 
 
 class ResizeToCover(object):
@@ -28,13 +32,14 @@ class ResizeToCover(object):
     but it's used internally by ``ResizeToFill`` and ``SmartResize``.
 
     """
-    def __init__(self, width, height):
+    def __init__(self, width, height, upscale=True):
         """
         :param width: The target width, in pixels.
         :param height: The target height, in pixels.
 
         """
         self.width, self.height = width, height
+        self.upscale = upscale
 
     def process(self, img):
         original_width, original_height = img.size
@@ -42,7 +47,8 @@ class ResizeToCover(object):
                 float(self.height) / original_height)
         new_width, new_height = (int(original_width * ratio),
                 int(original_height * ratio))
-        return Resize(new_width, new_height).process(img)
+        img = Resize(new_width, new_height, upscale=self.upscale).process(img)
+        return img
 
 
 class ResizeToFill(object):
@@ -51,22 +57,26 @@ class ResizeToFill(object):
 
     """
 
-    def __init__(self, width=None, height=None, anchor=None):
+    def __init__(self, width=None, height=None, anchor=None, upscale=True):
         """
         :param width: The target width, in pixels.
         :param height: The target height, in pixels.
         :param anchor: Specifies which part of the image should be retained
             when cropping.
+        :param upscale: Should the image be enlarged if smaller than the dimensions?
+
         """
         self.width = width
         self.height = height
         self.anchor = anchor
+        self.upscale = upscale
 
     def process(self, img):
         from .crop import Crop
-        img = ResizeToCover(self.width, self.height).process(img)
+        img = ResizeToCover(self.width, self.height,
+                            upscale=self.upscale).process(img)
         return Crop(self.width, self.height,
-                anchor=self.anchor).process(img)
+                    anchor=self.anchor).process(img)
 
 
 class SmartResize(object):
@@ -76,17 +86,20 @@ class SmartResize(object):
     Internally, it simply runs the ``ResizeToCover`` and ``SmartCrop``
     processors in series.
     """
-    def __init__(self, width, height):
+    def __init__(self, width, height, upscale=True):
         """
         :param width: The target width, in pixels.
         :param height: The target height, in pixels.
+        :param upscale: Should the image be enlarged if smaller than the dimensions?
 
         """
         self.width, self.height = width, height
+        self.upscale = upscale
 
     def process(self, img):
         from .crop import SmartCrop
-        img = ResizeToCover(self.width, self.height).process(img)
+        img = ResizeToCover(self.width, self.height,
+                            upscale=self.upscale).process(img)
         return SmartCrop(self.width, self.height).process(img)
 
 
@@ -182,7 +195,7 @@ class ResizeToFit(object):
 
     """
 
-    def __init__(self, width=None, height=None, upscale=None, mat_color=None, anchor=Anchor.CENTER):
+    def __init__(self, width=None, height=None, upscale=True, mat_color=None, anchor=Anchor.CENTER):
         """
         :param width: The maximum width of the desired image.
         :param height: The maximum height of the desired image.
@@ -211,8 +224,7 @@ class ResizeToFit(object):
                 ratio = float(self.width) / cur_width
         new_dimensions = (int(round(cur_width * ratio)),
                           int(round(cur_height * ratio)))
-        if (cur_width > new_dimensions[0] or cur_height > new_dimensions[1]) or self.upscale:
-            img = Resize(new_dimensions[0], new_dimensions[1]).process(img)
+        img = Resize(new_dimensions[0], new_dimensions[1], upscale=self.upscale).process(img)
         if self.mat_color is not None:
             img = ResizeCanvas(self.width, self.height, self.mat_color, anchor=self.anchor).process(img)
         return img
