@@ -26,6 +26,16 @@ def test_resizetofit():
     eq_(img.size, (100, 50))
 
 
+def test_resize_rounding():
+    """
+    Regression test for matthewwithanm/pilkit#1
+    """
+
+    img = Image.new('RGB', (95, 95))
+    img = ResizeToFill(28, 28).process(img)
+    eq_(img.size, (28, 28))
+
+
 def test_resizetofit_mat():
     img = Image.new('RGB', (200, 100))
     img = ResizeToFit(100, 100, mat_color=0x000000).process(img)
