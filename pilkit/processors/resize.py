@@ -45,8 +45,8 @@ class ResizeToCover(object):
         original_width, original_height = img.size
         ratio = max(float(self.width) / original_width,
                 float(self.height) / original_height)
-        new_width, new_height = (int(original_width * ratio),
-                int(original_height * ratio))
+        new_width, new_height = (int(round(original_width * ratio)),
+                int(round(original_height * ratio)))
         img = Resize(new_width, new_height, upscale=self.upscale).process(img)
         return img
 
