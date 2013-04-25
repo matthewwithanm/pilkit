@@ -2,7 +2,9 @@ from pilkit.lib import Image, ImageDraw
 from pilkit.processors import (Resize, ResizeToFill, ResizeToFit, SmartCrop,
                                SmartResize)
 from nose.tools import eq_, assert_true
+from pilkit.processors.resize import Thumbnail
 from .utils import create_image
+import mock
 
 
 def test_smartcrop():
@@ -86,3 +88,17 @@ def test_upscale():
 
         img2 = P(500, 500, upscale=False).process(img)
         eq_(img2.size, (100, 100))
+
+
+@mock.patch('pilkit.processors.resize.SmartResize')
+def test_should_repass_upscale_option_true(my_mock):
+    img = Image.new('RGB', (100, 100))
+    img_thumb = Thumbnail(height=200, width=200, upscale=True).process(img)
+    my_mock.assert_called_once_with(width=200, upscale=True, height=200)
+
+
+@mock.patch('pilkit.processors.resize.SmartResize')
+def test_should_repass_upscale_option_false(my_mock):
+    img = Image.new('RGB', (100, 100))
+    img_thumb = Thumbnail(height=200, width=200, upscale=False).process(img)
+    my_mock.assert_called_once_with(width=200, upscale=False, height=200)
