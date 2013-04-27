@@ -90,15 +90,55 @@ def test_upscale():
         eq_(img2.size, (100, 100))
 
 
+def test_should_raise_exception_if_anchor_is_passed_and_crop_is_set_to_false():
+    try:
+        Thumbnail(height=200, width=200, upscale=False, crop=False, anchor='t')
+    except Exception, e:
+        eq_(e.message, "You can't specify an anchor point if crop is False.")
+
+
+def test_should_set_crop_to_true_if_anchor_is_passed_without_crop():
+    thumb = Thumbnail(height=200, width=200, upscale=False, anchor='t')
+    assert_true(thumb.crop)
+
+
+def test_should_raise_exception_when_crop_is_passed_without_height_and_width():
+    img = Image.new('RGB', (100, 100))
+    try:
+        Thumbnail(crop=True).process(img)
+    except Exception, e:
+        eq_(e.message, "You must provide both a width and height when cropping.")
+
+
+@mock.patch('pilkit.processors.resize.SmartResize')
+def test_should_call_smartresize_when_crop_not_passed(my_mock):
+    img = Image.new('RGB', (100, 100))
+    Thumbnail(height=200, width=200, upscale=False).process(img)
+    assert_true(my_mock.called)
+
+
 @mock.patch('pilkit.processors.resize.SmartResize')
 def test_should_repass_upscale_option_true(my_mock):
     img = Image.new('RGB', (100, 100))
-    img_thumb = Thumbnail(height=200, width=200, upscale=True).process(img)
+    Thumbnail(height=200, width=200, upscale=True).process(img)
     my_mock.assert_called_once_with(width=200, upscale=True, height=200)
 
 
 @mock.patch('pilkit.processors.resize.SmartResize')
 def test_should_repass_upscale_option_false(my_mock):
     img = Image.new('RGB', (100, 100))
-    img_thumb = Thumbnail(height=200, width=200, upscale=False).process(img)
+    Thumbnail(height=200, width=200, upscale=False).process(img)
     my_mock.assert_called_once_with(width=200, upscale=False, height=200)
+
+
+@mock.patch('pilkit.processors.resize.ResizeToFill')
+def test_should_call_resizetofill_when_crop_and_ancho_is_passed(my_mock):
+    img = Image.new('RGB', (100, 100))
+    Thumbnail(height=200, width=200, anchor='fake').process(img)
+    assert_true(my_mock.called)
+
+@mock.patch('pilkit.processors.resize.ResizeToFit')
+def test_should_call_resizetofit_when_crop_is_not_passed(my_mock):
+    img = Image.new('RGB', (100, 100))
+    Thumbnail(height=200, width=200, crop=False).process(img)
+    assert_true(my_mock.called)
