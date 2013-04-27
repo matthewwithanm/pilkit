@@ -29,6 +29,7 @@ setup(
     zip_safe=False,
     include_package_data=True,
     tests_require=[
+        'mock==1.0.1',
         'nose==1.2.1',
         'nose-progressive==1.3',
         'Pillow==1.7.8',

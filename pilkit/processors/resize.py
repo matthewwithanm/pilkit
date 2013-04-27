@@ -240,9 +240,10 @@ class Thumbnail(object):
 
     """
 
-    def __init__(self, width=None, height=None, anchor=None, crop=None):
+    def __init__(self, width=None, height=None, anchor=None, crop=None, upscale=None):
         self.width = width
         self.height = height
+        self.upscale = upscale
         if anchor:
             if crop is False:
                 raise Exception("You can't specify an anchor point if crop is False.")
@@ -265,9 +266,9 @@ class Thumbnail(object):
                 raise Exception('You must provide both a width and height when'
                     ' cropping.')
             if self.anchor == 'auto':
-                processor = SmartResize(self.width, self.height)
+                processor = SmartResize(width=self.width, height=self.height, upscale=self.upscale)
             else:
-                processor = ResizeToFill(self.width, self.height, self.anchor)
+                processor = ResizeToFill(width=self.width, height=self.height, anchor=self.anchor, upscale=self.upscale)
         else:
-            processor = ResizeToFit(self.width, self.height)
+            processor = ResizeToFit(width=self.width, height=self.height, upscale=self.upscale)
         return processor.process(img)
