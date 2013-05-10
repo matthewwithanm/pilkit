@@ -214,7 +214,7 @@ def prepare_image(img, format):
     :param format: The format that the image will be saved to.
 
     """
-    matte = False
+    make_opaque = False
     save_kwargs = {}
 
     if img.mode == 'RGBA':
@@ -227,8 +227,8 @@ def prepare_image(img, format):
             # fully opaque; pixels that are more transparent than not will
             # become fully transparent. This will not produce a good-looking
             # result if your image contains varying levels of opacity; in
-            # that case, you'll probably want to use a processor to matte
-            # the image on a solid color. The reason we don't matte by
+            # that case, you'll probably want to use a processor to composite
+            # the image on a solid color. The reason we don't do this by
             # default is because not doing so allows processors to treat
             # RGBA-format images as a super-type of P-format images: if you
             # have an RGBA-format image with only a single transparent
@@ -249,13 +249,13 @@ def prepare_image(img, format):
             save_kwargs['transparency'] = 255
         else:
             # Simply converting an RGBA-format image to an RGB one creates a
-            # gross result, so we matte the image on a white background. If
+            # gross result, so we paste the image onto a white background. If
             # that's not what you want, that's fine: use a processor to deal
             # with the transparency however you want. This is simply a
             # sensible default that will always produce something that looks
             # good. Or at least, it will look better than just a straight
             # conversion.
-            matte = True
+            make_opaque = True
     elif img.mode == 'P':
         if format in PALETTE_TRANSPARENCY_FORMATS:
             try:
@@ -267,7 +267,7 @@ def prepare_image(img, format):
             # aren't also P-mode formats, so this will never happen.
             img = img.convert('RGBA')
         else:
-            matte = True
+            make_opaque = True
     else:
         img = img.convert('RGB')
 
@@ -278,7 +278,7 @@ def prepare_image(img, format):
         if format == 'GIF':
             img = img.convert('P', palette=Image.ADAPTIVE)
 
-    if matte:
+    if make_opaque:
         from .processors import MakeOpaque
         img = MakeOpaque().process(img).convert('RGB')
 
