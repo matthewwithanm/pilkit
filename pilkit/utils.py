@@ -288,3 +288,16 @@ def prepare_image(img, format):
         save_kwargs['optimize'] = True
 
     return img, save_kwargs
+
+
+def process_image(img, processors=None, format=None, autoconvert=True, options=None):
+    from .processors import ProcessorPipeline
+
+    original_format = img.format
+
+    # Run the processors
+    img = ProcessorPipeline(processors or []).process(img)
+
+    format = format or img.format or original_format or 'JPEG'
+    options = options or {}
+    return img_to_fobj(img, format, autoconvert, **options)
