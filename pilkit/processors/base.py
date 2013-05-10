@@ -207,3 +207,18 @@ class Anchor(object):
         if anchor in Anchor._ANCHOR_PTS.keys():
             anchor = Anchor._ANCHOR_PTS[anchor]
         return anchor
+
+
+class MakeOpaque(object):
+    """
+    Pastes the provided image onto an image of a solid color. Used for when you
+    want to make transparent images opaque.
+
+    """
+    def __init__(self, background_color=(255, 255, 255)):
+        self.background_color = background_color
+
+    def process(self, img):
+        new_img = Image.new('RGBA', img.size, self.background_color)
+        new_img.paste(img, img)
+        return new_img
