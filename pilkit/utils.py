@@ -279,10 +279,8 @@ def prepare_image(img, format):
             img = img.convert('P', palette=Image.ADAPTIVE)
 
     if matte:
-        img = img.convert('RGBA')
-        bg = Image.new('RGBA', img.size, (255, 255, 255))
-        bg.paste(img, img)
-        img = bg.convert('RGB')
+        from .processors import MakeOpaque
+        img = MakeOpaque().process(img).convert('RGB')
 
     if format == 'JPEG':
         save_kwargs['optimize'] = True
