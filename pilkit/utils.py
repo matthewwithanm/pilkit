@@ -170,7 +170,7 @@ def save_image(img, outfile, format, options=None, autoconvert=True):
         # http://github.com/jdriscoll/django-imagekit/issues/50 and
         # https://github.com/jdriscoll/django-imagekit/issues/134
         old_maxblock = ImageFile.MAXBLOCK
-        ImageFile.MAXBLOCK = max(img.size) ** 2
+        ImageFile.MAXBLOCK = sys.maxint
         try:
             img.save(outfile, format, **options)
         finally:
