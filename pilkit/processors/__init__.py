@@ -12,4 +12,5 @@ from the filesystem.
 
 from .base import *
 from .crop import *
+from .overlay import *
 from .resize import *
