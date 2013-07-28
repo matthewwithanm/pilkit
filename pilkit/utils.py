@@ -67,7 +67,7 @@ def _format_to_extension(format):
             # ``DEFAULT_EXTENSIONS``, it must also be recognized by PIL.
             if ext in Image.EXTENSION:
                 return ext
-        for k, v in Image.EXTENSION.iteritems():
+        for k, v in Image.EXTENSION.items():
             if v == format:
                 return k
     return None
