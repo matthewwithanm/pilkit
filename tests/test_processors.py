@@ -69,7 +69,7 @@ def test_resize_antialiasing():
     img = Resize(100, 100).process(img)
 
     # Count the number of colors
-    color_count = len(filter(None, img.histogram()))
+    color_count = len(list(filter(None, img.histogram())))
 
     assert_true(color_count > 2)
 
