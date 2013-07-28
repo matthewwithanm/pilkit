@@ -13,8 +13,11 @@ read = lambda filepath: codecs.open(filepath, 'r', 'utf-8').read()
 
 # Load package meta from the pkgmeta module without loading the package.
 pkgmeta = {}
-execfile(os.path.join(os.path.dirname(__file__),
-         'pilkit', 'pkgmeta.py'), pkgmeta)
+pkgmeta_file = os.path.join(os.path.dirname(__file__), 'pilkit', 'pkgmeta.py')
+with open(pkgmeta_file) as f:
+    code = compile(f.read(), 'pkgmeta.py', 'exec')
+    exec(code, pkgmeta)
+
 
 setup(
     name='pilkit',
@@ -32,7 +35,7 @@ setup(
         'mock==1.0.1',
         'nose==1.2.1',
         'nose-progressive==1.3',
-        'Pillow==1.7.8',
+        'Pillow',
     ],
     test_suite='nose.collector',
     install_requires=[],
@@ -44,6 +47,8 @@ setup(
         'Programming Language :: Python :: 2.5',
         'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3.2',
+        'Programming Language :: Python :: 3.3',
         'Topic :: Utilities'
     ],
 )

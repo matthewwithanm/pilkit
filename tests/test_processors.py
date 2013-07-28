@@ -69,7 +69,7 @@ def test_resize_antialiasing():
     img = Resize(100, 100).process(img)
 
     # Count the number of colors
-    color_count = len(filter(None, img.histogram()))
+    color_count = len(list(filter(None, img.histogram())))
 
     assert_true(color_count > 2)
 
@@ -93,8 +93,8 @@ def test_upscale():
 def test_should_raise_exception_if_anchor_is_passed_and_crop_is_set_to_false():
     try:
         Thumbnail(height=200, width=200, upscale=False, crop=False, anchor='t')
-    except Exception, e:
-        eq_(e.message, "You can't specify an anchor point if crop is False.")
+    except Exception as e:
+        eq_(str(e), "You can't specify an anchor point if crop is False.")
 
 
 def test_should_set_crop_to_true_if_anchor_is_passed_without_crop():
@@ -106,8 +106,8 @@ def test_should_raise_exception_when_crop_is_passed_without_height_and_width():
     img = Image.new('RGB', (100, 100))
     try:
         Thumbnail(crop=True).process(img)
-    except Exception, e:
-        eq_(e.message, "You must provide both a width and height when cropping.")
+    except Exception as e:
+        eq_(str(e), 'You must provide both a width and height when cropping.')
 
 
 @mock.patch('pilkit.processors.resize.SmartResize')

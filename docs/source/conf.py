@@ -44,8 +44,11 @@ project = u'PILKit'
 copyright = u'2013, Matthew Tretter'
 
 pkgmeta = {}
-execfile(os.path.join(os.path.dirname(__file__), '..', '..', 'pilkit',
-                      'pkgmeta.py'), pkgmeta)
+pkgmeta_file = os.path.join(os.path.dirname(__file__), '..', '..', 'pilkit',
+                            'pkgmeta.py')
+with open(pkgmeta_file) as f:
+    code = compile(f.read(), 'pkgmeta.py', 'exec')
+    exec(code, pkgmeta)
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
