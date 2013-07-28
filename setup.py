@@ -35,7 +35,7 @@ setup(
         'mock==1.0.1',
         'nose==1.2.1',
         'nose-progressive==1.3',
-        'Pillow==1.7.8',
+        'Pillow',
     ],
     test_suite='nose.collector',
     install_requires=[],
