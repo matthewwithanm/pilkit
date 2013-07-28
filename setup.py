@@ -13,8 +13,11 @@ read = lambda filepath: codecs.open(filepath, 'r', 'utf-8').read()
 
 # Load package meta from the pkgmeta module without loading the package.
 pkgmeta = {}
-execfile(os.path.join(os.path.dirname(__file__),
-         'pilkit', 'pkgmeta.py'), pkgmeta)
+pkgmeta_file = os.path.join(os.path.dirname(__file__), 'pilkit', 'pkgmeta.py')
+with open(pkgmeta_file) as f:
+    code = compile(f.read(), 'pkgmeta.py', 'exec')
+    exec(code, pkgmeta)
+
 
 setup(
     name='pilkit',
