@@ -19,7 +19,7 @@ except ImportError:
         raise ImportError('PILKit was unable to import the Python Imaging Library. Please confirm it`s installed and available on your current Python path.')
 
 try:
-    from io import StringIO
+    from io import BytesIO as StringIO
 except ImportError as exc:
     try:
         from cStringIO import StringIO
