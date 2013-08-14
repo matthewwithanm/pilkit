@@ -12,8 +12,8 @@ DEFAULT_EXTENSIONS = {
 }
 
 
-def img_to_fobj(img, format, autoconvert=True, **options):
-    return save_image(img, StringIO(), format, options, autoconvert)
+def img_to_fobj(img, format, original_size, autoconvert=True, **options):
+    return save_image(img, StringIO(), format, original_size, options, autoconvert)
 
 
 def open_image(target):
@@ -139,7 +139,7 @@ def suggest_extension(name, format):
     return extension
 
 
-def save_image(img, outfile, format, options=None, autoconvert=True):
+def save_image(img, outfile, format, original_size, options=None, autoconvert=True):
     """
     Wraps PIL's ``Image.save()`` method. There are two main benefits of using
     this function over PIL's:
@@ -170,7 +170,7 @@ def save_image(img, outfile, format, options=None, autoconvert=True):
         # http://github.com/jdriscoll/django-imagekit/issues/50 and
         # https://github.com/jdriscoll/django-imagekit/issues/134
         old_maxblock = ImageFile.MAXBLOCK
-        ImageFile.MAXBLOCK = sys.maxint
+        ImageFile.MAXBLOCK = max(original_size) ** 2
         try:
             img.save(outfile, format, **options)
         finally:
@@ -292,10 +292,11 @@ def process_image(img, processors=None, format=None, autoconvert=True, options=N
     from .processors import ProcessorPipeline
 
     original_format = img.format
+    original_size = img.size
 
     # Run the processors
     img = ProcessorPipeline(processors or []).process(img)
 
     format = format or img.format or original_format or 'JPEG'
     options = options or {}
-    return img_to_fobj(img, format, autoconvert, **options)
+    return img_to_fobj(img, format, original_size, autoconvert, **options)
