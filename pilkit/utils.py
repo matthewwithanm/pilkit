@@ -1,6 +1,7 @@
 import os
 import mimetypes
 import sys
+from io import UnsupportedOperation
 from .exceptions import UnknownExtension, UnknownFormat
 from .lib import Image, ImageFile, StringIO
 
@@ -139,6 +140,27 @@ def suggest_extension(name, format):
     return extension
 
 
+class FileWrapper(object):
+
+    def __init__(self, wrapped):
+        super(FileWrapper, self).__setattr__('_wrapped', wrapped)
+
+    def fileno(self):
+        try:
+            return self._wrapped.fileno()
+        except UnsupportedOperation:
+            raise AttributeError
+
+    def __getattr__(self, name):
+        return getattr(self._wrapped, name)
+
+    def __setattr__(self, name, value):
+        return setattr(self._wrapped, name, value)
+
+    def __delattr__(self, key):
+        return delattr(self._wrapped, key)
+
+
 def save_image(img, outfile, format, options=None, autoconvert=True):
     """
     Wraps PIL's ``Image.save()`` method. There are two main benefits of using
@@ -161,9 +183,20 @@ def save_image(img, outfile, format, options=None, autoconvert=True):
     except AttributeError:
         pass
 
-    try:
+    def save(fp):
         with quiet():
-            img.save(outfile, format, **options)
+            img.save(fp, format, **options)
+
+    try:
+        try:
+            save(outfile)
+        except UnsupportedOperation:
+            # Some versions of PIL only catch AttributeErrors where they should
+            # also catch UnsupportedOperation exceptions. To work around this,
+            # we wrap the file with an object that will raise the type of error
+            # it wants.
+            outfile = FileWrapper(outfile)
+            save(outfile)
     except IOError:
         # PIL can have problems saving large JPEGs if MAXBLOCK isn't big enough,
         # So if we have a problem saving, we temporarily increase it. See
@@ -172,7 +205,7 @@ def save_image(img, outfile, format, options=None, autoconvert=True):
         old_maxblock = ImageFile.MAXBLOCK
         ImageFile.MAXBLOCK = sys.maxint
         try:
-            img.save(outfile, format, **options)
+            save(outfile)
         finally:
             ImageFile.MAXBLOCK = old_maxblock
 

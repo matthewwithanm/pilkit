@@ -1,5 +1,6 @@
+from io import UnsupportedOperation
 from pilkit.exceptions import UnknownFormat, UnknownExtension
-from pilkit.utils import extension_to_format, format_to_extension
+from pilkit.utils import extension_to_format, format_to_extension, FileWrapper
 from nose.tools import eq_, raises
 
 
@@ -34,3 +35,13 @@ def test_default_extension():
 
     """
     eq_(format_to_extension('JPEG'), '.jpg')
+
+
+@raises(AttributeError)
+def test_filewrapper():
+
+    class K(object):
+        def fileno(self):
+            raise UnsupportedOperation
+
+    FileWrapper(K()).fileno()
