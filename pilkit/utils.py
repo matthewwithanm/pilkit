@@ -153,7 +153,10 @@ def save_image(img, outfile, format, options=None, autoconvert=True):
 
     if autoconvert:
         img, save_kwargs = prepare_image(img, format)
-        options = dict(save_kwargs.items() + options.items())
+        # Use returned from prepare_image arguments for base
+        # and update them with provided options. Then use the result
+        save_kwargs.update(options)
+        options = save_kwargs
 
     # Attempt to reset the file pointer.
     try:
