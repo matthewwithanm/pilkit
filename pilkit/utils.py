@@ -187,16 +187,13 @@ def save_image(img, outfile, format, options=None, autoconvert=True):
         with quiet():
             img.save(fp, format, **options)
 
+    # Some versions of PIL only catch AttributeErrors where they should also
+    # catch UnsupportedOperation exceptions. To work around this, we wrap the
+    # file with an object that will raise the type of error it wants.
+    wrapper = FileWrapper(outfile)
+
     try:
-        try:
-            save(outfile)
-        except UnsupportedOperation:
-            # Some versions of PIL only catch AttributeErrors where they should
-            # also catch UnsupportedOperation exceptions. To work around this,
-            # we wrap the file with an object that will raise the type of error
-            # it wants.
-            outfile = FileWrapper(outfile)
-            save(outfile)
+        save(wrapper)
     except IOError:
         # PIL can have problems saving large JPEGs if MAXBLOCK isn't big enough,
         # So if we have a problem saving, we temporarily increase it. See
@@ -205,7 +202,7 @@ def save_image(img, outfile, format, options=None, autoconvert=True):
         old_maxblock = ImageFile.MAXBLOCK
         ImageFile.MAXBLOCK = sys.maxint
         try:
-            save(outfile)
+            save(wrapper)
         finally:
             ImageFile.MAXBLOCK = old_maxblock
 
