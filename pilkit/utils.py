@@ -200,10 +200,21 @@ def save_image(img, outfile, format, options=None, autoconvert=True):
     except IOError:
         # PIL can have problems saving large JPEGs if MAXBLOCK isn't big enough,
         # So if we have a problem saving, we temporarily increase it. See
-        # http://github.com/jdriscoll/django-imagekit/issues/50 and
-        # https://github.com/jdriscoll/django-imagekit/issues/134
+        # http://github.com/matthewwithanm/django-imagekit/issues/50
+        # https://github.com/matthewwithanm/django-imagekit/issues/134
+        # https://github.com/python-imaging/Pillow/issues/148
+        # https://github.com/matthewwithanm/pilkit/commit/0f914e8b40e3d30f28e04ffb759b262aa8a1a082#commitcomment-3885362
+
+        # MAXBLOCK must be at least as big as...
+        new_maxblock = max(
+            (len(options['exif']) if 'exif' in options else 0) + 5,  # ...the entire exif header block
+            img.size[0] * 4,  # ...a complete scan line
+            3 * img.size[0] * img.size[1],  # ...3 bytes per every pixel in the image
+        )
+        if new_maxblock < ImageFile.MAXBLOCK:
+            raise
         old_maxblock = ImageFile.MAXBLOCK
-        ImageFile.MAXBLOCK = sys.maxint
+        ImageFile.MAXBLOCK = new_maxblock
         try:
             save(wrapper)
         finally:
