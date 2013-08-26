@@ -3,7 +3,7 @@ import mimetypes
 import sys
 from io import UnsupportedOperation
 from .exceptions import UnknownExtension, UnknownFormat
-from .lib import Image, ImageFile, StringIO
+from .lib import Image, ImageFile, StringIO, string_types
 
 
 RGBA_TRANSPARENCY_FORMATS = ['PNG']
@@ -193,7 +193,11 @@ def save_image(img, outfile, format, options=None, autoconvert=True):
     # Some versions of PIL only catch AttributeErrors where they should also
     # catch UnsupportedOperation exceptions. To work around this, we wrap the
     # file with an object that will raise the type of error it wants.
-    wrapper = FileWrapper(outfile)
+    if any(isinstance(outfile, t) for t in string_types):
+        # ...but don't wrap strings.
+        wrapper = outfile
+    else:
+        wrapper = FileWrapper(outfile)
 
     try:
         save(wrapper)

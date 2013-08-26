@@ -28,3 +28,8 @@ except ImportError as exc:
             from StringIO import StringIO
         except ImportError:
             raise exc
+
+try:
+    string_types = [basestring, str]
+except NameError:
+    string_types = [str]
