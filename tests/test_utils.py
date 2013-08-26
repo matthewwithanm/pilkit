@@ -1,7 +1,10 @@
 from io import UnsupportedOperation
 from pilkit.exceptions import UnknownFormat, UnknownExtension
-from pilkit.utils import extension_to_format, format_to_extension, FileWrapper
+from pilkit.utils import (extension_to_format, format_to_extension, FileWrapper,
+                          save_image)
 from nose.tools import eq_, raises
+from tempfile import NamedTemporaryFile
+from .utils import create_image
 
 
 def test_extension_to_format():
@@ -45,3 +48,15 @@ def test_filewrapper():
             raise UnsupportedOperation
 
     FileWrapper(K()).fileno()
+
+
+def test_save_with_filename():
+    """
+    Test that ``save_image`` accepts filename strings (not just file objects).
+    This is a test for GH-8.
+
+    """
+    im = create_image()
+    outfile = NamedTemporaryFile()
+    save_image(im, outfile.name, 'JPEG')
+    outfile.close()
