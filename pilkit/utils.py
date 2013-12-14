@@ -264,6 +264,7 @@ def prepare_image(img, format):
     """
     make_opaque = False
     save_kwargs = {}
+    format = format.upper()
 
     if img.mode == 'RGBA':
         if format in RGBA_TRANSPARENCY_FORMATS:
