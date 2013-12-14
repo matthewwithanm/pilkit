@@ -1,8 +1,9 @@
 from io import UnsupportedOperation
 from pilkit.exceptions import UnknownFormat, UnknownExtension
+from pilkit.lib import Image
 from pilkit.utils import (extension_to_format, format_to_extension, FileWrapper,
-                          save_image)
-from nose.tools import eq_, raises
+                          save_image, prepare_image)
+from nose.tools import eq_, raises, assert_in
 from tempfile import NamedTemporaryFile
 from .utils import create_image
 
@@ -60,3 +61,12 @@ def test_save_with_filename():
     outfile = NamedTemporaryFile()
     save_image(im, outfile.name, 'JPEG')
     outfile.close()
+
+
+def test_format_normalization():
+    """
+    Make sure formats are normalized by ``prepare_image()``.
+    See https://github.com/matthewwithanm/django-imagekit/issues/262
+    """
+    im = Image.new('RGBA', (100, 100))
+    assert_in('transparency', prepare_image(im, 'gIF')[1])
