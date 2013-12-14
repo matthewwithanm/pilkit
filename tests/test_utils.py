@@ -3,7 +3,7 @@ from pilkit.exceptions import UnknownFormat, UnknownExtension
 from pilkit.lib import Image
 from pilkit.utils import (extension_to_format, format_to_extension, FileWrapper,
                           save_image, prepare_image)
-from nose.tools import eq_, raises, assert_in
+from nose.tools import eq_, raises, ok_
 from tempfile import NamedTemporaryFile
 from .utils import create_image
 
@@ -69,4 +69,4 @@ def test_format_normalization():
     See https://github.com/matthewwithanm/django-imagekit/issues/262
     """
     im = Image.new('RGBA', (100, 100))
-    assert_in('transparency', prepare_image(im, 'gIF')[1])
+    ok_('transparency' in prepare_image(im, 'gIF')[1])
