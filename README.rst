@@ -4,12 +4,15 @@ Library).
 One of its main features is a set of **processors** which expose a simple
 interface for performing manipulations on PIL images.
 
+Looking for more advanced processors? Check out `Instakit`_!
+
 **For the complete documentation on the latest stable version of PILKit, see**
 `PILKit on RTD`_.
 
 .. image:: https://api.travis-ci.org/matthewwithanm/pilkit.png
 
 .. _`PILKit on RTD`: http://pilkit.readthedocs.org
+.. _`Instakit`: https://github.com/fish2000/instakit
 
 
 Installation
