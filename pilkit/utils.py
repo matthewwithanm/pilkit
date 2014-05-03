@@ -18,8 +18,8 @@ def img_to_fobj(img, format, autoconvert=True, **options):
 
 
 def open_image(target):
-    target.seek(0)
-    return Image.open(target)
+    buffer = StringIO(target.read())
+    return Image.open(buffer)
 
 
 _pil_init = 0
