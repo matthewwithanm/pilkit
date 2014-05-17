@@ -161,7 +161,7 @@ class Transpose(object):
             try:
                 orientation = img._getexif()[0x0112]
                 ops = self._EXIF_ORIENTATION_STEPS[orientation]
-            except (KeyError, TypeError, AttributeError):
+            except (IndexError, KeyError, TypeError, AttributeError):
                 ops = []
         else:
             ops = self.methods
