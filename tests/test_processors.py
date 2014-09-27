@@ -1,7 +1,8 @@
 from pilkit.lib import Image, ImageDraw
 from pilkit.processors import (Resize, ResizeToFill, ResizeToFit, SmartCrop,
-                               SmartResize)
+                               SmartResize, MakeOpaque)
 from nose.tools import eq_, assert_true
+import os
 from pilkit.processors.resize import Thumbnail
 from .utils import create_image
 import mock
@@ -142,3 +143,9 @@ def test_should_call_resizetofit_when_crop_is_not_passed(my_mock):
     img = Image.new('RGB', (100, 100))
     Thumbnail(height=200, width=200, crop=False).process(img)
     assert_true(my_mock.called)
+
+def test_make_gifs_opaque():
+    dir = os.path.dirname(__file__)
+    path = os.path.join(dir, 'assets', 'cat.gif')
+    gif = Image.open(path)
+    MakeOpaque().process(gif)
