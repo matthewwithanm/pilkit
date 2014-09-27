@@ -219,6 +219,7 @@ class MakeOpaque(object):
         self.background_color = background_color
 
     def process(self, img):
+        img = img.convert('RGBA')
         new_img = Image.new('RGBA', img.size, self.background_color)
         new_img.paste(img, img)
         return new_img
