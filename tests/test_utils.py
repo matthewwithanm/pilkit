@@ -1,8 +1,10 @@
+import os
 from io import UnsupportedOperation
 from pilkit.exceptions import UnknownFormat, UnknownExtension
 from pilkit.lib import Image
 from pilkit.utils import (extension_to_format, format_to_extension, FileWrapper,
-                          save_image, prepare_image)
+                          save_image, prepare_image, quiet)
+from mock import Mock, patch
 from nose.tools import eq_, raises, ok_
 from tempfile import NamedTemporaryFile
 from .utils import create_image
@@ -70,3 +72,13 @@ def test_format_normalization():
     """
     im = Image.new('RGBA', (100, 100))
     ok_('transparency' in prepare_image(im, 'gIF')[1])
+
+def test_quiet():
+    """
+    Make sure the ``quiet`` util doesn't error if devnull is unwriteable.
+    See https://github.com/matthewwithanm/django-imagekit/issues/294
+    """
+    mocked = Mock(side_effect=OSError)
+    with patch.object(os, 'open', mocked):
+        with quiet():
+            pass
