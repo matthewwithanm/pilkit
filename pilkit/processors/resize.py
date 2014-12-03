@@ -235,15 +235,19 @@ class Thumbnail(object):
     Resize the image for use as a thumbnail. Wraps ``ResizeToFill``,
     ``ResizeToFit``, and ``SmartResize``.
 
+    :param proportion: If set, the processor will pick which of the height or width
+        to resize.
+
     Note: while it doesn't currently, in the future this processor may also
     sharpen based on the amount of reduction.
 
     """
 
-    def __init__(self, width=None, height=None, anchor=None, crop=None, upscale=None):
+    def __init__(self, width=None, height=None, anchor=None, crop=None, upscale=None, proportion=None):
         self.width = width
         self.height = height
         self.upscale = upscale
+        self.proportion = proportion
         if anchor:
             if crop is False:
                 raise Exception("You can't specify an anchor point if crop is False.")
@@ -270,5 +274,16 @@ class Thumbnail(object):
             else:
                 processor = ResizeToFill(width=self.width, height=self.height, anchor=self.anchor, upscale=self.upscale)
         else:
+            if self.proportion:
+                w, h = img.size
+                if w > h:
+                    self.width = self.proportion
+                    self.height = None
+                elif w < h:
+                    self.height = self.proportion
+                    self.width = None
+                else:
+                    self.height = self.proportion
+                    self.width = self.proportion
             processor = ResizeToFit(width=self.width, height=self.height, upscale=self.upscale)
         return processor.process(img)
