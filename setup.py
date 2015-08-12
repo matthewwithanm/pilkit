@@ -28,7 +28,7 @@ setup(
     author_email='m@tthewwithanm.com',
     license='BSD',
     url='http://github.com/matthewwithanm/pilkit/',
-    packages=find_packages(),
+    packages=find_packages(exclude=['tests', 'tests.*']),
     zip_safe=False,
     include_package_data=True,
     tests_require=[
