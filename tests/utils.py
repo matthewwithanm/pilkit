@@ -11,7 +11,7 @@ def get_image_file():
 
     """
     dir = os.path.dirname(__file__)
-    path = os.path.join(dir, 'assets', 'lenna.png')
+    path = os.path.join(dir, 'assets', 'reference.png')
     return open(path, 'r+b')
 
 
