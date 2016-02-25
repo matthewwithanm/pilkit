@@ -10,6 +10,7 @@ Looking for more advanced processors? Check out `Instakit`_!
 `PILKit on RTD`_.
 
 .. image:: https://api.travis-ci.org/matthewwithanm/pilkit.png
+  :target: https://travis-ci.org/matthewwithanm/pilkit
 
 .. _`PILKit on RTD`: http://pilkit.readthedocs.org
 .. _`Instakit`: https://github.com/fish2000/instakit
