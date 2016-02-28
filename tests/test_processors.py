@@ -1,6 +1,6 @@
-from pilkit.lib import Image, ImageDraw
+from pilkit.lib import Image, ImageDraw, ImageColor
 from pilkit.processors import (Resize, ResizeToFill, ResizeToFit, SmartCrop,
-                               SmartResize, MakeOpaque)
+                               SmartResize, MakeOpaque, ColorOverlay)
 from nose.tools import eq_, assert_true
 import os
 from pilkit.processors.resize import Thumbnail
@@ -43,6 +43,16 @@ def test_resizetofit_mat():
     img = Image.new('RGB', (200, 100))
     img = ResizeToFit(100, 100, mat_color=0x000000).process(img)
     eq_(img.size, (100, 100))
+
+
+def test_coloroverlay():
+    """
+    Test that the ColorOverlay processor
+    """
+    img = Image.new('RGB', (200, 100))
+    color = ImageColor.getrgb('#cc0000')
+    img = ColorOverlay(color, overlay_opacity=1.0).process(img)
+    eq_(img.getpixel((0,0)), (204, 0, 0))
 
 
 def test_resize_antialiasing():
