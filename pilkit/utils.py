@@ -249,7 +249,7 @@ class quiet(object):
             self.stderr_fd = sys.__stderr__.fileno()
             self.old = os.dup(self.stderr_fd)
             os.dup2(self.null_fd, self.stderr_fd)
-        except OSError:
+        except:
             return
 
     def __exit__(self, *args, **kwargs):
@@ -257,7 +257,7 @@ class quiet(object):
             return
         try:
             os.dup2(self.old, self.stderr_fd)
-        except OSError:
+        except:
             return
         os.close(self.null_fd)
         os.close(self.old)
