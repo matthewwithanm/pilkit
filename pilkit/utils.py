@@ -245,14 +245,20 @@ class quiet(object):
             # If dev/null isn't writeable, then they just have to put up with
             # the noise.
             return
-        self.stderr_fd = sys.__stderr__.fileno()
-        self.old = os.dup(self.stderr_fd)
-        os.dup2(self.null_fd, self.stderr_fd)
+        try:
+            self.stderr_fd = sys.__stderr__.fileno()
+            self.old = os.dup(self.stderr_fd)
+            os.dup2(self.null_fd, self.stderr_fd)
+        except OSError:
+            return
 
     def __exit__(self, *args, **kwargs):
         if not getattr(self, 'null_fd', None):
             return
-        os.dup2(self.old, self.stderr_fd)
+        try:
+            os.dup2(self.old, self.stderr_fd)
+        except OSError:
+            return
         os.close(self.null_fd)
         os.close(self.old)
 
