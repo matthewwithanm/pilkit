@@ -241,16 +241,20 @@ class quiet(object):
     def __enter__(self):
         try:
             self.null_fd = os.open(os.devnull, os.O_RDWR)
+            self.stderr_fd = sys.__stderr__.fileno()
         except OSError:
             # If dev/null isn't writeable, then they just have to put up with
             # the noise.
             return
-        self.stderr_fd = sys.__stderr__.fileno()
+        except AttributeError:
+            # In case of Azure, the file descriptor is not present so we can return
+            # from here
+            return
         self.old = os.dup(self.stderr_fd)
         os.dup2(self.null_fd, self.stderr_fd)
 
     def __exit__(self, *args, **kwargs):
-        if not getattr(self, 'null_fd', None):
+        if not getattr(self, 'null_fd', None) or getattr(self, 'old', None):
             return
         os.dup2(self.old, self.stderr_fd)
         os.close(self.null_fd)
