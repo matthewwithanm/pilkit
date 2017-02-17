@@ -159,3 +159,12 @@ def test_make_gifs_opaque():
     path = os.path.join(dir, 'assets', 'cat.gif')
     gif = Image.open(path)
     MakeOpaque().process(gif)
+
+def test_resize_thumbnail_proportionally():
+    sizes = ((400, 200), (200, 400), (400, 400))
+    for size in sizes:
+        img_in = Image.new('RGB', size)
+        img_out = Thumbnail(proportion=100).process(img_in)
+        width, height = img_out.size
+        eq_(width, img_in.size[0] / 4)
+        eq_(height, img_in.size[1] / 4)
