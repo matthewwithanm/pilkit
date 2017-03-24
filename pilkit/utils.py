@@ -18,6 +18,8 @@ def img_to_fobj(img, format, autoconvert=True, **options):
 
 
 def open_image(target):
+    if target.closed:
+        target.open()
     target.seek(0)
     return Image.open(target)
 
