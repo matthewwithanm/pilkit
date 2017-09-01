@@ -22,7 +22,7 @@ with open(pkgmeta_file) as f:
 setup(
     name='pilkit',
     version=pkgmeta['__version__'],
-    description='A collection of utilities and processors for the Python Imaging Libary.',
+    description='A collection of utilities and processors for the Python Imaging Library.',
     long_description=read(os.path.join(os.path.dirname(__file__), 'README.rst')),
     author='Matthew Tretter',
     author_email='m@tthewwithanm.com',
