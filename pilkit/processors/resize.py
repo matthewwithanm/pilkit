@@ -161,14 +161,10 @@ class ResizeCanvas(object):
             x, y = self.x, self.y
 
         # Width and Height must be integers
-        self.width = round(self.width)
-        self.height = round(self.height)
+        self.width = int(round(self.width))
+        self.height = int(round(self.height))
 
-        try:
-            new_img = Image.new('RGBA', (self.width, self.height), self.color)
-        except OSError as exc:
-            # OSError: cannot write mode RGBA as JPEG
-            new_img = Image.new('RGB', (self.width, self.height), self.color)
+        new_img = Image.new(img.mode, (self.width, self.height), self.color)
 
         new_img.paste(img, (x, y))
         return new_img
