@@ -160,7 +160,12 @@ class ResizeCanvas(object):
         else:
             x, y = self.x, self.y
 
-        new_img = Image.new('RGBA', (self.width, self.height), self.color)
+        # Width and Height must be integers
+        self.width = int(round(self.width))
+        self.height = int(round(self.height))
+
+        new_img = Image.new(img.mode, (self.width, self.height), self.color)
+
         new_img.paste(img, (x, y))
         return new_img
 
