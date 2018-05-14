@@ -245,6 +245,10 @@ class quiet(object):
             # In case of Azure, the file descriptor is not present so we can return
             # from here
             return
+        except UnsupportedOperation:
+            # In case of Windows 2016, the file descriptor is not present so we can return
+            # from here
+            return
         try:
             self.null_fd = os.open(os.devnull, os.O_RDWR)
         except OSError:
