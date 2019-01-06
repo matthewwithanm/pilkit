@@ -1,6 +1,6 @@
 from pilkit.lib import Image, ImageDraw, ImageColor
 from pilkit.processors import (Resize, ResizeToFill, ResizeToFit, SmartCrop,
-                               SmartResize, MakeOpaque, ColorOverlay)
+                               SmartResize, MakeOpaque, ColorOverlay, Convert)
 from nose.tools import eq_, assert_true
 import os
 from pilkit.processors.resize import Thumbnail
@@ -53,6 +53,15 @@ def test_coloroverlay():
     color = ImageColor.getrgb('#cc0000')
     img = ColorOverlay(color, overlay_opacity=1.0).process(img)
     eq_(img.getpixel((0,0)), (204, 0, 0))
+
+def test_convert():
+    img = Image.new('RGBA', (200, 100))
+
+    img_RGBa = Convert("RGBa").process(img)
+    eq_(img_RGBa.mode, "RGBa")
+
+    img_RGBa_RGBA = Convert("RGBA").process(img)
+    eq_(img_RGBa_RGBA.mode, "RGBA")
 
 
 def test_resize_antialiasing():
