@@ -1,6 +1,7 @@
 from pilkit.lib import Image, ImageDraw, ImageColor
 from pilkit.processors import (Resize, ResizeToFill, ResizeToFit, SmartCrop,
-                               SmartResize, MakeOpaque, ColorOverlay, Convert)
+                               SmartResize, MakeOpaque, ColorOverlay, Convert,
+                               GaussianBlur)
 from nose.tools import eq_, assert_true
 import os
 from pilkit.processors.resize import Thumbnail
@@ -162,6 +163,32 @@ def test_should_call_resizetofit_when_crop_is_not_passed(my_mock):
     img = Image.new('RGB', (100, 100))
     Thumbnail(height=200, width=200, crop=False).process(img)
     assert_true(my_mock.called)
+
+@mock.patch('PIL.ImageFilter.GaussianBlur', autospec=True)
+def test_GaussianBlur_should_pass_positional_argument(my_mock):
+    # arrange
+    pil_gaussian_blur_instance = my_mock.return_value
+    img = mock.MagicMock(wraps = Image.new('RGB', (100, 100)))
+
+    # act
+    GaussianBlur(12).process(img)
+
+    # assert
+    my_mock.assert_called_once_with(12)
+    img.filter.assert_called_once_with(pil_gaussian_blur_instance)
+
+@mock.patch('PIL.ImageFilter.GaussianBlur', autospec=True)
+def test_GaussianBlur_should_pass_named_argument(my_mock):
+    # arrange
+    pil_gaussian_blur_instance = my_mock.return_value
+    img = mock.MagicMock(wraps = Image.new('RGB', (100, 100)))
+
+    # act
+    GaussianBlur(radius = 12).process(img)
+
+    # assert
+    my_mock.assert_called_once_with(12)
+    img.filter.assert_called_once_with(pil_gaussian_blur_instance)
 
 def test_make_gifs_opaque():
     dir = os.path.dirname(__file__)
