@@ -12,5 +12,6 @@ from the filesystem.
 
 from .base import *
 from .crop import *
+from .convert import *
 from .overlay import *
 from .resize import *
