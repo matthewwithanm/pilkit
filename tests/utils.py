@@ -2,7 +2,7 @@ import os
 from pilkit.lib import Image
 
 
-def get_image_file():
+def get_image_file(image_name):
     """
     See also:
 
@@ -11,9 +11,24 @@ def get_image_file():
 
     """
     dir = os.path.dirname(__file__)
-    path = os.path.join(dir, 'assets', 'reference.png')
+    path = os.path.join(dir, 'assets', image_name)
     return open(path, 'r+b')
 
+def get_reference_image_file():
+    return get_image_file('reference.png')
 
 def create_image():
-    return Image.open(get_image_file())
+    return Image.open(get_reference_image_file())
+
+def compare_images(a, b):
+  if a.size != b.size:
+    return False
+
+  rows, cols = a.size
+
+  for row in range(rows):
+    for col in range(cols):
+      if a.getpixel((row, col)) != b.getpixel((row, col)):
+        return False
+
+  return True

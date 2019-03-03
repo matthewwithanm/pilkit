@@ -5,7 +5,7 @@ from pilkit.processors import (Resize, ResizeToFill, ResizeToFit, SmartCrop,
 from nose.tools import eq_, assert_true
 import os
 from pilkit.processors.resize import Thumbnail
-from .utils import create_image
+from .utils import create_image, compare_images, get_image_file
 import mock
 
 
@@ -164,31 +164,19 @@ def test_should_call_resizetofit_when_crop_is_not_passed(my_mock):
     Thumbnail(height=200, width=200, crop=False).process(img)
     assert_true(my_mock.called)
 
-@mock.patch('PIL.ImageFilter.GaussianBlur', autospec=True)
-def test_GaussianBlur_should_pass_positional_argument(my_mock):
-    # arrange
-    pil_gaussian_blur_instance = my_mock.return_value
-    img = mock.MagicMock(wraps = Image.new('RGB', (100, 100)))
+def test_GaussianBlur_radius_3():
+    img = GaussianBlur(radius = 3).process(create_image())
+    img = img.crop((112,112,144,144))
 
-    # act
-    GaussianBlur(12).process(img)
+    expected_img = Image.open(get_image_file("GaussianBlur_radius_3.png"))
+    assert_true(compare_images(img, expected_img))
 
-    # assert
-    my_mock.assert_called_once_with(12)
-    img.filter.assert_called_once_with(pil_gaussian_blur_instance)
+def test_GaussianBlur_radius_7():
+    img = GaussianBlur(radius=7).process(create_image())
+    img = img.crop((112, 112, 144, 144))
 
-@mock.patch('PIL.ImageFilter.GaussianBlur', autospec=True)
-def test_GaussianBlur_should_pass_named_argument(my_mock):
-    # arrange
-    pil_gaussian_blur_instance = my_mock.return_value
-    img = mock.MagicMock(wraps = Image.new('RGB', (100, 100)))
-
-    # act
-    GaussianBlur(radius = 12).process(img)
-
-    # assert
-    my_mock.assert_called_once_with(12)
-    img.filter.assert_called_once_with(pil_gaussian_blur_instance)
+    expected_img = Image.open(get_image_file("GaussianBlur_radius_7.png"))
+    assert_true(compare_images(img, expected_img))
 
 def test_make_gifs_opaque():
     dir = os.path.dirname(__file__)
