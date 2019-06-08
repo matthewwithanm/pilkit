@@ -1,10 +1,11 @@
 from pilkit.lib import Image, ImageDraw, ImageColor
 from pilkit.processors import (Resize, ResizeToFill, ResizeToFit, SmartCrop,
-                               SmartResize, MakeOpaque, ColorOverlay, Convert)
+                               SmartResize, MakeOpaque, ColorOverlay, Convert,
+                               GaussianBlur)
 from nose.tools import eq_, assert_true
 import os
 from pilkit.processors.resize import Thumbnail
-from .utils import create_image
+from .utils import create_image, compare_images, get_image_file
 import mock
 
 
@@ -162,6 +163,20 @@ def test_should_call_resizetofit_when_crop_is_not_passed(my_mock):
     img = Image.new('RGB', (100, 100))
     Thumbnail(height=200, width=200, crop=False).process(img)
     assert_true(my_mock.called)
+
+def test_GaussianBlur_radius_3():
+    img = GaussianBlur(radius = 3).process(create_image())
+    img = img.crop((112,112,144,144))
+
+    expected_img = Image.open(get_image_file("GaussianBlur_radius_3.png"))
+    assert_true(compare_images(img, expected_img))
+
+def test_GaussianBlur_radius_7():
+    img = GaussianBlur(radius=7).process(create_image())
+    img = img.crop((112, 112, 144, 144))
+
+    expected_img = Image.open(get_image_file("GaussianBlur_radius_7.png"))
+    assert_true(compare_images(img, expected_img))
 
 def test_make_gifs_opaque():
     dir = os.path.dirname(__file__)
