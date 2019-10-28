@@ -5,18 +5,25 @@ Welcome to PILKit's documentation!
 .. include:: ../../README.rst
 
 
+Contents
+--------
+
+.. toctree::
+   :maxdepth: 2
+
+   processors/resize
+   processors/filter
+
+
 Authors
-=======
+-------
 
 .. include:: ../../AUTHORS
 
 
-Contents
-=========
+Indices and tables
+------------------
 
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-
-.. toctree::
-   :maxdepth: 2
