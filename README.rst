@@ -9,8 +9,8 @@ Looking for more advanced processors? Check out `Instakit`_!
 **For the complete documentation on the latest stable version of PILKit, see**
 `PILKit on RTD`_.
 
-.. image:: https://api.travis-ci.org/matthewwithanm/pilkit.png
-  :target: https://travis-ci.org/matthewwithanm/pilkit
+.. image:: https://github.com/matthewwithanm/pilkit/workflows/Python%20CI/badge.svg
+  :target: https://github.com/matthewwithanm/pilkit/actions?query=workflow%3A%22Python+CI%22
 
 .. _`PILKit on RTD`: http://pilkit.readthedocs.org
 .. _`Instakit`: https://github.com/fish2000/instakit
