@@ -20,3 +20,14 @@ def histogram_entropy_py(image):
 # Select the Pillow native histogram entropy function - if
 # available - and fall back to the Python implementation:
 histogram_entropy = getattr(Image.Image, 'entropy', histogram_entropy_py)
+
+def resolve_palette(image):
+    """ Convert a palette image to a non-palette image. """
+
+    # Work around a bug in PIL: Image.palette doesn't check to see if
+    # image is loaded.
+    image.load()
+
+    if image.palette is None:
+        return image
+    return image.convert(image.palette.mode)

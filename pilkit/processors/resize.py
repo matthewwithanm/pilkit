@@ -1,4 +1,5 @@
 from .base import Anchor
+from .utils import resolve_palette
 from ..lib import Image
 
 
@@ -20,7 +21,7 @@ class Resize(object):
 
     def process(self, img):
         if self.upscale or (self.width < img.size[0] and self.height < img.size[1]):
-            img = img.convert('RGBA')
+            img = resolve_palette(img)
             img = img.resize((self.width, self.height), Image.ANTIALIAS)
         return img
 
