@@ -24,8 +24,7 @@ histogram_entropy = getattr(Image.Image, 'entropy', histogram_entropy_py)
 def resolve_palette(image):
     """ Convert a palette image to a non-palette image. """
 
-    # Work around a bug in PIL: Image.palette doesn't check to see if
-    # image is loaded.
+    # We need to load the image before accessing the palette
     image.load()
 
     if image.palette is None:
