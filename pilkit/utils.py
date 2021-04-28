@@ -6,7 +6,7 @@ from .exceptions import UnknownExtension, UnknownFormat
 from .lib import Image, ImageFile, StringIO, string_types
 
 
-RGBA_TRANSPARENCY_FORMATS = ['PNG']
+RGBA_TRANSPARENCY_FORMATS = ['PNG', 'WEBP']
 PALETTE_TRANSPARENCY_FORMATS = ['PNG', 'GIF']
 DEFAULT_EXTENSIONS = {
     'JPEG': '.jpg',
