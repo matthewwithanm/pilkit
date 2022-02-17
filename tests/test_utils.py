@@ -1,33 +1,35 @@
 import os
-from io import UnsupportedOperation
+import io
+import pytest
+from mock import Mock, patch
+from tempfile import NamedTemporaryFile
+
 from pilkit.exceptions import UnknownFormat, UnknownExtension
 from pilkit.lib import Image
 from pilkit.utils import (extension_to_format, format_to_extension, FileWrapper,
                           save_image, prepare_image, quiet)
-from mock import Mock, patch
-from nose.tools import eq_, raises, ok_
-from tempfile import NamedTemporaryFile
+
 from .utils import create_image
 
 
 def test_extension_to_format():
-    eq_(extension_to_format('.jpeg'), 'JPEG')
-    eq_(extension_to_format('.rgba'), 'SGI')
+    assert extension_to_format('.jpeg') == 'JPEG'
+    assert extension_to_format('.rgba') == 'SGI'
 
 
 def test_format_to_extension_no_init():
-    eq_(format_to_extension('PNG'), '.png')
-    eq_(format_to_extension('ICO'), '.ico')
+    assert format_to_extension('PNG') == '.png'
+    assert format_to_extension('ICO') == '.ico'
 
 
-@raises(UnknownFormat)
 def test_unknown_format():
-    format_to_extension('TXT')
+    with pytest.raises(UnknownFormat):
+        format_to_extension('TXT')
 
 
-@raises(UnknownExtension)
 def test_unknown_extension():
-    extension_to_format('.txt')
+    with pytest.raises(UnknownExtension):
+        extension_to_format('.txt')
 
 
 def test_default_extension():
@@ -40,17 +42,17 @@ def test_default_extension():
     extensions we'd prefer, and this tests to make sure it's working.
 
     """
-    eq_(format_to_extension('JPEG'), '.jpg')
+    assert format_to_extension('JPEG') == '.jpg'
 
 
-@raises(AttributeError)
 def test_filewrapper():
 
     class K(object):
         def fileno(self):
-            raise UnsupportedOperation
+            raise io.UnsupportedOperation
 
-    FileWrapper(K()).fileno()
+    with pytest.raises(AttributeError):
+        FileWrapper(K()).fileno()
 
 
 def test_save_with_filename():
@@ -60,9 +62,8 @@ def test_save_with_filename():
 
     """
     im = create_image()
-    outfile = NamedTemporaryFile()
-    save_image(im, outfile.name, 'JPEG')
-    outfile.close()
+    with NamedTemporaryFile() as outfile:
+        save_image(im, outfile.name, 'JPEG')
 
 
 def test_format_normalization():
@@ -71,7 +72,8 @@ def test_format_normalization():
     See https://github.com/matthewwithanm/django-imagekit/issues/262
     """
     im = Image.new('RGBA', (100, 100))
-    ok_('transparency' in prepare_image(im, 'gIF')[1])
+    assert 'transparency' in prepare_image(im, 'gIF')[1]
+
 
 def test_quiet():
     """

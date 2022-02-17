@@ -1,22 +1,23 @@
+import os
+import mock
+import pytest
+
 from pilkit.lib import Image, ImageDraw, ImageColor
 from pilkit.processors import (Resize, ResizeToFill, ResizeToFit, SmartCrop,
                                SmartResize, MakeOpaque, ColorOverlay, Convert,
                                GaussianBlur)
-from nose.tools import eq_, assert_true
-import os
 from pilkit.processors.resize import Thumbnail
 from .utils import create_image, compare_images, get_image_file
-import mock
 
 
 def test_smartcrop():
     img = SmartCrop(100, 100).process(create_image())
-    eq_(img.size, (100, 100))
+    assert img.size == (100, 100)
 
 
 def test_resizetofill():
     img = ResizeToFill(100, 100).process(create_image())
-    eq_(img.size, (100, 100))
+    assert img.size == (100, 100)
 
 
 def test_resizetofit():
@@ -27,7 +28,7 @@ def test_resizetofit():
     img = ResizeToFit(100, 100).process(img)
 
     # Assert that the image has maintained the aspect ratio.
-    eq_(img.size, (100, 50))
+    assert img.size == (100, 50)
 
 
 def test_resize_rounding():
@@ -37,13 +38,13 @@ def test_resize_rounding():
 
     img = Image.new('RGB', (95, 95))
     img = ResizeToFill(28, 28).process(img)
-    eq_(img.size, (28, 28))
+    assert img.size == (28, 28)
 
 
 def test_resizetofit_mat():
     img = Image.new('RGB', (200, 100))
     img = ResizeToFit(100, 100, mat_color=0x000000).process(img)
-    eq_(img.size, (100, 100))
+    assert img.size == (100, 100)
 
 
 def test_coloroverlay():
@@ -53,16 +54,16 @@ def test_coloroverlay():
     img = Image.new('RGB', (200, 100))
     color = ImageColor.getrgb('#cc0000')
     img = ColorOverlay(color, overlay_opacity=1.0).process(img)
-    eq_(img.getpixel((0,0)), (204, 0, 0))
+    assert img.getpixel((0,0)) == (204, 0, 0)
 
 def test_convert():
     img = Image.new('RGBA', (200, 100))
 
     img_RGBa = Convert("RGBa").process(img)
-    eq_(img_RGBa.mode, "RGBa")
+    assert img_RGBa.mode == "RGBa"
 
     img_RGBa_RGBA = Convert("RGBA").process(img)
-    eq_(img_RGBa_RGBA.mode, "RGBA")
+    assert img_RGBa_RGBA.mode == "RGBA"
 
 
 def test_resize_antialiasing():
@@ -92,7 +93,7 @@ def test_resize_antialiasing():
     # Count the number of colors
     color_count = len(list(filter(None, img.histogram())))
 
-    assert_true(color_count > 2)
+    assert color_count > 2
 
 
 def test_upscale():
@@ -105,37 +106,33 @@ def test_upscale():
 
     for P in [Resize, ResizeToFit, ResizeToFill, SmartResize]:
         img2 = P(500, 500, upscale=True).process(img)
-        eq_(img2.size, (500, 500))
+        assert img2.size == (500, 500)
 
         img2 = P(500, 500, upscale=False).process(img)
-        eq_(img2.size, (100, 100))
+        assert img2.size == (100, 100)
 
 
 def test_should_raise_exception_if_anchor_is_passed_and_crop_is_set_to_false():
-    try:
+    with pytest.raises(Exception, match=r"You can't specify an anchor point if crop is False."):
         Thumbnail(height=200, width=200, upscale=False, crop=False, anchor='t')
-    except Exception as e:
-        eq_(str(e), "You can't specify an anchor point if crop is False.")
 
 
 def test_should_set_crop_to_true_if_anchor_is_passed_without_crop():
     thumb = Thumbnail(height=200, width=200, upscale=False, anchor='t')
-    assert_true(thumb.crop)
+    assert thumb.crop
 
 
 def test_should_raise_exception_when_crop_is_passed_without_height_and_width():
     img = Image.new('RGB', (100, 100))
-    try:
+    with pytest.raises(Exception, match=r"You must provide both a width and height when cropping."):
         Thumbnail(crop=True).process(img)
-    except Exception as e:
-        eq_(str(e), 'You must provide both a width and height when cropping.')
 
 
 @mock.patch('pilkit.processors.resize.SmartResize')
 def test_should_call_smartresize_when_crop_not_passed(my_mock):
     img = Image.new('RGB', (100, 100))
     Thumbnail(height=200, width=200, upscale=False).process(img)
-    assert_true(my_mock.called)
+    assert my_mock.called
 
 
 @mock.patch('pilkit.processors.resize.SmartResize')
@@ -156,27 +153,27 @@ def test_should_repass_upscale_option_false(my_mock):
 def test_should_call_resizetofill_when_crop_and_ancho_is_passed(my_mock):
     img = Image.new('RGB', (100, 100))
     Thumbnail(height=200, width=200, anchor='fake').process(img)
-    assert_true(my_mock.called)
+    assert my_mock.called
 
 @mock.patch('pilkit.processors.resize.ResizeToFit')
 def test_should_call_resizetofit_when_crop_is_not_passed(my_mock):
     img = Image.new('RGB', (100, 100))
     Thumbnail(height=200, width=200, crop=False).process(img)
-    assert_true(my_mock.called)
+    assert my_mock.called
 
 def test_GaussianBlur_radius_3():
     img = GaussianBlur(radius = 3).process(create_image())
     img = img.crop((112,112,144,144))
 
     expected_img = Image.open(get_image_file("GaussianBlur_radius_3.png"))
-    assert_true(compare_images(img, expected_img))
+    assert compare_images(img, expected_img)
 
 def test_GaussianBlur_radius_7():
     img = GaussianBlur(radius=7).process(create_image())
     img = img.crop((112, 112, 144, 144))
 
     expected_img = Image.open(get_image_file("GaussianBlur_radius_7.png"))
-    assert_true(compare_images(img, expected_img))
+    assert compare_images(img, expected_img)
 
 def test_make_gifs_opaque():
     dir = os.path.dirname(__file__)

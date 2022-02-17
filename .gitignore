@@ -4,6 +4,8 @@
 *.pyc
 .DS_Store
 .tox
+.coverage
+.vscode
 MANIFEST
 build
 dist
