@@ -3,13 +3,10 @@ import codecs
 import os
 from setuptools import setup, find_packages
 
-# Workaround for multiprocessing/nose issue. See http://bugs.python.org/msg170215
-try:
-    import multiprocessing
-except ImportError:
-    pass
 
-read = lambda filepath: codecs.open(filepath, 'r', 'utf-8').read()
+def read(filepath):
+    with codecs.open(filepath, 'r', 'utf-8') as f:
+        return f.read()
 
 # Load package meta from the pkgmeta module without loading the package.
 pkgmeta = {}
@@ -31,13 +28,6 @@ setup(
     packages=find_packages(exclude=['tests', 'tests.*']),
     zip_safe=False,
     include_package_data=True,
-    tests_require=[
-        'mock>=1.0.1',
-        'nose>=1.3.6',
-        'nose-progressive>=1.5.1',
-        'Pillow',
-    ],
-    test_suite='nose.collector',
     install_requires=[],
     classifiers=[
         'Development Status :: 5 - Production/Stable',
@@ -47,12 +37,12 @@ setup(
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
         'Topic :: Utilities'
     ],
 )
