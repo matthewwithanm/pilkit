@@ -1,4 +1,4 @@
-from pilkit.lib import Image, ImageColor, ImageEnhance
+from pilkit.lib import PIL_TRANSPOSE, Image, ImageColor, ImageEnhance
 
 
 class ProcessorPipeline(list):
@@ -116,11 +116,11 @@ class Transpose(object):
 
     """
     AUTO = 'auto'
-    FLIP_HORIZONTAL = Image.FLIP_LEFT_RIGHT
-    FLIP_VERTICAL = Image.FLIP_TOP_BOTTOM
-    ROTATE_90 = Image.ROTATE_90
-    ROTATE_180 = Image.ROTATE_180
-    ROTATE_270 = Image.ROTATE_270
+    FLIP_HORIZONTAL = PIL_TRANSPOSE.FLIP_LEFT_RIGHT
+    FLIP_VERTICAL = PIL_TRANSPOSE.FLIP_TOP_BOTTOM
+    ROTATE_90 = PIL_TRANSPOSE.ROTATE_90
+    ROTATE_180 = PIL_TRANSPOSE.ROTATE_180
+    ROTATE_270 = PIL_TRANSPOSE.ROTATE_270
 
     methods = [AUTO]
     _EXIF_ORIENTATION_STEPS = {
