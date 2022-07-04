@@ -311,7 +311,7 @@ def prepare_image(img, format):
 
             alpha = img.split()[-1]
             mask = Image.eval(alpha, lambda a: 255 if a <= 128 else 0)
-            img = img.convert('RGB').convert('P', palette=Image.ADAPTIVE,
+            img = img.convert('RGB').convert('P', palette=Image.Palette.ADAPTIVE,
                     colors=255)
             img.paste(255, mask)
             save_kwargs['transparency'] = 255
