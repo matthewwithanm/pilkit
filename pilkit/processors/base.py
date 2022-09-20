@@ -115,12 +115,13 @@ class Transpose(object):
     Rotates or flips the image.
 
     """
-    AUTO = 'auto'
-    FLIP_HORIZONTAL = Image.FLIP_LEFT_RIGHT
-    FLIP_VERTICAL = Image.FLIP_TOP_BOTTOM
-    ROTATE_90 = Image.ROTATE_90
-    ROTATE_180 = Image.ROTATE_180
-    ROTATE_270 = Image.ROTATE_270
+
+    AUTO = "auto"
+    FLIP_HORIZONTAL = Image.Transpose.FLIP_LEFT_RIGHT
+    FLIP_VERTICAL = Image.Transpose.FLIP_TOP_BOTTOM
+    ROTATE_90 = Image.Transpose.ROTATE_90
+    ROTATE_180 = Image.Transpose.ROTATE_180
+    ROTATE_270 = Image.Transpose.ROTATE_270
 
     methods = [AUTO]
     _EXIF_ORIENTATION_STEPS = {
