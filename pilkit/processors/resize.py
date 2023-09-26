@@ -22,7 +22,7 @@ class Resize(object):
     def process(self, img):
         if self.upscale or (self.width < img.size[0] and self.height < img.size[1]):
             img = resolve_palette(img)
-            img = img.resize((self.width, self.height), Image.ANTIALIAS)
+            img = img.resize((self.width, self.height), Image.LANCZOS)
         return img
 
 
