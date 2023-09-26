@@ -1,4 +1,4 @@
-from pilkit.lib import Image, ImageColor, ImageEnhance
+from pilkit.lib import Image, ImageColor, ImageEnhance, getattrsafe
 
 
 class ProcessorPipeline(list):
@@ -80,7 +80,7 @@ class Reflection(object):
         # Handle palleted images.
         img = img.convert('RGBA')
         # Copy orignial image and flip the orientation.
-        reflection = img.copy().transpose(Image.FLIP_TOP_BOTTOM)
+        reflection = img.copy().transpose(Transpose.FLIP_VERTICAL)
         # Create a new image filled with the bgcolor the same size.
         background = Image.new("RGBA", img.size, background_color)
         # Calculate our alpha mask.
@@ -116,11 +116,11 @@ class Transpose(object):
 
     """
     AUTO = 'auto'
-    FLIP_HORIZONTAL = Image.FLIP_LEFT_RIGHT
-    FLIP_VERTICAL = Image.FLIP_TOP_BOTTOM
-    ROTATE_90 = Image.ROTATE_90
-    ROTATE_180 = Image.ROTATE_180
-    ROTATE_270 = Image.ROTATE_270
+    FLIP_HORIZONTAL = getattrsafe(Image, 'Transpose.FLIP_LEFT_RIGHT', 'FLIP_LEFT_RIGHT')  # noqa
+    FLIP_VERTICAL = getattrsafe(Image, 'Transpose.FLIP_TOP_BOTTOM', 'FLIP_TOP_BOTTOM')  # noqa
+    ROTATE_90 = getattrsafe(Image, 'Transpose.ROTATE_90', 'ROTATE_90')
+    ROTATE_180 = getattrsafe(Image, 'Transpose.ROTATE_180', 'ROTATE_180')
+    ROTATE_270 = getattrsafe(Image, 'Transpose.ROTATE_270', 'ROTATE_270')
 
     methods = [AUTO]
     _EXIF_ORIENTATION_STEPS = {

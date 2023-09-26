@@ -3,7 +3,7 @@ import mimetypes
 import sys
 from io import UnsupportedOperation
 from .exceptions import UnknownExtension, UnknownFormat
-from .lib import Image, ImageFile, StringIO, string_types
+from .lib import Image, ImageFile, StringIO, string_types, getattrsafe
 
 
 RGBA_TRANSPARENCY_FORMATS = ['PNG', 'WEBP']
@@ -311,8 +311,8 @@ def prepare_image(img, format):
 
             alpha = img.split()[-1]
             mask = Image.eval(alpha, lambda a: 255 if a <= 128 else 0)
-            img = img.convert('RGB').convert('P', palette=Image.ADAPTIVE,
-                    colors=255)
+            palette = getattrsafe(Image, 'Palette.ADAPTIVE', 'ADAPTIVE')
+            img = img.convert('RGB').convert('P', palette=palette, colors=255)
             img.paste(255, mask)
             save_kwargs['transparency'] = 255
         else:
@@ -344,7 +344,8 @@ def prepare_image(img, format):
         # quantization (above). Images that are already in P mode don't need
         # any quantization because their colors are already limited.
         if format == 'GIF':
-            img = img.convert('P', palette=Image.ADAPTIVE)
+            palette = getattrsafe(Image, 'Palette.ADAPTIVE', 'ADAPTIVE')
+            img = img.convert('P', palette=palette)
 
     if make_opaque:
         from .processors import MakeOpaque
