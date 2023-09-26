@@ -1,6 +1,6 @@
 from .base import Anchor
 from .utils import resolve_palette
-from ..lib import Image
+from ..lib import Image, getattrsafe
 
 
 class Resize(object):
@@ -8,6 +8,8 @@ class Resize(object):
     Resizes an image to the specified width and height.
 
     """
+    LANCZOS = getattrsafe(Image, 'Resampling.LANCZOS', 'LANCZOS')
+
     def __init__(self, width, height, upscale=True):
         """
         :param width: The target width, in pixels.
@@ -22,7 +24,7 @@ class Resize(object):
     def process(self, img):
         if self.upscale or (self.width < img.size[0] and self.height < img.size[1]):
             img = resolve_palette(img)
-            img = img.resize((self.width, self.height), Image.LANCZOS)
+            img = img.resize((self.width, self.height), self.LANCZOS)
         return img
 
 
