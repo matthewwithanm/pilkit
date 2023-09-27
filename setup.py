@@ -1,4 +1,4 @@
-#/usr/bin/env python
+#!/usr/bin/env python
 import codecs
 import os
 from setuptools import setup, find_packages
@@ -7,6 +7,7 @@ from setuptools import setup, find_packages
 def read(filepath):
     with codecs.open(filepath, 'r', 'utf-8') as f:
         return f.read()
+
 
 # Load package meta from the pkgmeta module without loading the package.
 pkgmeta = {}
