@@ -1,5 +1,5 @@
 import os
-import mock
+from unittest import mock
 import pytest
 
 from pilkit.lib import Image, ImageDraw, ImageColor
