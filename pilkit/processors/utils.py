@@ -29,4 +29,9 @@ def resolve_palette(image):
 
     if image.palette is None:
         return image
-    return image.convert(image.palette.mode)
+
+    has_transparency = "transparency" in image.info
+    mode = image.palette.mode
+    if mode == "RGB" and has_transparency:
+        mode = "RGBA"
+    return image.convert(mode)
