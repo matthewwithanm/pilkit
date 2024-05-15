@@ -66,7 +66,7 @@ class TrimBorderColor(object):
                     .convert('RGBA')
             diff = ImageChops.subtract(diff, tmp)
 
-        bbox = diff.getbbox()
+        bbox = diff.getbbox(alpha_only=False)
         if bbox:
             img = _crop(img, bbox, self.sides)
         return img
