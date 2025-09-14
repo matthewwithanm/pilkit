@@ -5,6 +5,7 @@
 .DS_Store
 .tox
 .coverage
+.coverage.*
 .vscode
 MANIFEST
 build
