@@ -1,4 +1,5 @@
 from pilkit.lib import Image, ImageColor, ImageEnhance, getattrsafe
+from math import log10
 
 
 class ProcessorPipeline(list):
@@ -223,3 +224,45 @@ class MakeOpaque(object):
         new_img = Image.new('RGBA', img.size, self.background_color)
         new_img.paste(img, img)
         return new_img
+
+class SetOpacity(object):
+    """
+    Retrive the maximum opacity of an image, set this maximum opacity to a given value,
+    interpolate the rest of the values.
+    """
+
+    def __init__(self, max_alpha = 255):
+        """
+        :param max_alpha: integer between (0,255) representing the highest value wanted for the alpha chanel
+        :param interpolation: interpolation type (only "LINEAR" available for now)
+        """
+        #check values
+        if type(max_alpha) != int :
+            raise TypeError("max_alpha shall be an integer")
+        if max_alpha < 0 or max_alpha > 255 :
+            raise ValueError("max_alpha shall be an integer between [0;255]")
+        
+        #init
+        self.max_alpha = max_alpha
+        self.interpolation = interpolation
+
+    def interpolate(self, x, max_y, max_x):
+        y = float(x)*float(max_y)/float(max_x)
+        return int(y)
+
+    def process(self, img):
+        #convert to RGBA
+        new_img = img.convert("RGBA")
+        
+        #split chanels
+        r,g,b,a = new_img.split()
+
+        #retrive max alpha value
+        max_alpha_original = a.getextrema()[1]
+
+        #interpolate each pixel
+        for y in range(new_img.height):
+            for x in range(new_img.width):
+                a.putpixel((x,y), self.interpolate(a.getpixel((x,y)), self.max_alpha, max_alpha_original))
+
+        return Image.merge("RGBA",(r,g,b,a))
