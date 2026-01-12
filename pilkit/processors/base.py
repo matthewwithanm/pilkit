@@ -227,8 +227,10 @@ class MakeOpaque(object):
 
 class SetOpacity(object):
     """
-    Retrive the maximum opacity of an image, set this maximum opacity to a given value,
-    interpolate the rest of the values.
+    Convert an image to RGBA mode, retrive the maximum opacity of the image and set this maximum opacity to a given value.
+    - On a RGB image, the opacity will be even.
+    - On a RGBA image, the pixel with the higher alpha value will be set to the given value. 
+    The other values will be linearly interpolated.
     """
 
     def __init__(self, max_alpha = 255):
