@@ -5,7 +5,7 @@ import pytest
 from pilkit.lib import Image, ImageDraw, ImageColor
 from pilkit.processors import (Resize, ResizeToFill, ResizeToFit, SmartCrop,
                                SmartResize, MakeOpaque, SetOpacity, ColorOverlay, Convert,
-                               GaussianBlur)
+                               GaussianBlur, ImageOverlay)
 from pilkit.processors.resize import Thumbnail
 from .utils import create_image, compare_images, get_image_file
 
@@ -55,6 +55,32 @@ def test_coloroverlay():
     color = ImageColor.getrgb('#cc0000')
     img = ColorOverlay(color, overlay_opacity=1.0).process(img)
     assert img.getpixel((0,0)) == (204, 0, 0)
+
+def test_imageoverlay():
+    """
+    Test ImageOverlay processor
+    """
+    #test with RGBA mode background image
+    background_img_rgba = Image.open(get_image_file("reference.png")).convert("RGBA")
+    overlay_img_rgba = Image.open(get_image_file("image_with_transparency.png"))
+    result_1 = background_img_rgba
+    result_1 = ImageOverlay(overlay_img_rgba, (56,156)).process(result_1) #the overlay is completely inside the background image
+    result_1 = ImageOverlay(overlay_img_rgba, (-30,-10)).process(result_1) #the overlay top left corner is in the void
+    result_1 = ImageOverlay(overlay_img_rgba, (199,36)).process(result_1) #the overlay bottom right corner is in the void
+    expected_result_1 = Image.open(get_image_file("ImageOverlay_expected_result.png")).convert("RGBA") #This image have been generated with gimp
+    assert compare_images(result_1, expected_result_1) #overlay are positioned as expected 
+    assert result_1.mode == "RGBA" #the mode of the result is the same as the original 
+
+    #test with RGB mode background image
+    background_img_rgb = Image.open(get_image_file("reference.png")).convert("RGB")
+    result_2 = background_img_rgb
+    result_2 = ImageOverlay(overlay_img_rgba, (56,156)).process(result_2) #the overlay is completely inside the background image
+    result_2 = ImageOverlay(overlay_img_rgba, (-30,-10)).process(result_2) #the overlay top left corner is in the void
+    result_2 = ImageOverlay(overlay_img_rgba, (199,36)).process(result_2) #the overlay bottom right corner is in the void
+    expected_result_2 = Image.open(get_image_file("ImageOverlay_expected_result.png")).convert("RGB") #This image have been generated with gimp
+    assert compare_images(result_2, expected_result_2) #overlay are positioned as expected 
+    assert result_2.mode == "RGB" #the mode of the result is the same as the original
+
 
 def test_convert():
     img = Image.new('RGBA', (200, 100))
