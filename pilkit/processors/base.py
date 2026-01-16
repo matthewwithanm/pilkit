@@ -1,5 +1,4 @@
 from pilkit.lib import Image, ImageColor, ImageEnhance, getattrsafe
-from math import log10
 
 
 class ProcessorPipeline(list):
