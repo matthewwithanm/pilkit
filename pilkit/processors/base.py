@@ -245,7 +245,6 @@ class SetOpacity(object):
         
         #init
         self.max_alpha = max_alpha
-        self.interpolation = interpolation
 
     def interpolate(self, x, max_y, max_x):
         y = float(x)*float(max_y)/float(max_x)

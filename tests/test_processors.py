@@ -247,3 +247,16 @@ def test_setOpacity():
     expected_histogram_5[100] = 300 #px @244 lower to @100 (as wanted)
     r,g,b,a = result_5.split()
     assert a.histogram() == expected_histogram_5
+
+    # test error
+    with pytest.raises(ValueError) :
+        SetOpacity(-1).process(ref2) #Value error
+    
+    with pytest.raises(ValueError) :
+        SetOpacity(256).process(ref2) #Value error
+    
+    with pytest.raises(TypeError) :
+        SetOpacity(0.1).process(ref2) #Type error
+    
+    with pytest.raises(TypeError) :
+        SetOpacity("255").process(ref2) #Type error
