@@ -4,7 +4,7 @@ import pytest
 
 from pilkit.lib import Image, ImageDraw, ImageColor
 from pilkit.processors import (Resize, ResizeToFill, ResizeToFit, SmartCrop,
-                               SmartResize, MakeOpaque, ColorOverlay, Convert,
+                               SmartResize, MakeOpaque, SetOpacity, ColorOverlay, Convert,
                                GaussianBlur, ImageOverlay)
 from pilkit.processors.resize import Thumbnail
 from .utils import create_image, compare_images, get_image_file
@@ -206,3 +206,57 @@ def test_make_gifs_opaque():
     path = os.path.join(dir, 'assets', 'cat.gif')
     gif = Image.open(path)
     MakeOpaque().process(gif)
+
+def test_setOpacity():
+    #test on RGB image
+    ref_1 = Image.open(get_image_file("reference.png")).convert("RGB")
+    nb_pixels = ref_1.width*ref_1.height
+    result_1 = SetOpacity(0).process(ref_1)
+    assert result_1.mode == "RGBA" #mode of the output is RGBA
+    expected_histogram_1 = [0]*256 #initialize an empty histogram
+    expected_histogram_1[0] = nb_pixels #all pixels at 0
+    r,g,b,a = result_1.split()
+    assert a.histogram() == expected_histogram_1 #opacity is 0 on every pixel
+
+    result_2 = SetOpacity(50).process(ref_1)
+    assert result_2.mode == "RGBA" #mode of the output is RGBA
+    expected_histogram_2 = [0]*256 #initialize an empty histogram
+    expected_histogram_2[50] = nb_pixels #all pixels at 50
+    r,g,b,a = result_2.split()
+    assert a.histogram() == expected_histogram_2 #opacity is 0 on every pixel
+
+    result_3 = SetOpacity(125).process(ref_1)
+    assert result_3.mode == "RGBA" #mode of the output is RGBA
+    expected_histogram_3 = [0]*256 #initialize an empty histogram
+    expected_histogram_3[125] = nb_pixels #all pixels at 125
+    r,g,b,a = result_3.split()
+    assert a.histogram() == expected_histogram_3 #opacity is 0 on every pixel
+
+    #test on RGBA image
+    ref_2 = Image.open(get_image_file("multiple_alpha_image.png")) #image 60x30px with following alpha values [0, 8, 32, 78, 147, 244] (300px for each values)
+    result_4 = SetOpacity(244).process(ref_2) #no modification
+    assert compare_images(result_4,ref_2)
+
+    result_5 = SetOpacity(100).process(ref_2) #no modification
+    expected_histogram_5 = [0]*256 #initialize an empty histogram
+    expected_histogram_5[0] = 300 #all px @0 stay @0
+    expected_histogram_5[3] = 300 #px @8 lower to @3
+    expected_histogram_5[13] = 300 #px @32 lower to @13
+    expected_histogram_5[31] = 300 #px @78 lower to @31
+    expected_histogram_5[60] = 300 #px @147 lower to @60
+    expected_histogram_5[100] = 300 #px @244 lower to @100 (as wanted)
+    r,g,b,a = result_5.split()
+    assert a.histogram() == expected_histogram_5
+
+    # test error
+    with pytest.raises(ValueError) :
+        SetOpacity(-1).process(ref2) #Value error
+    
+    with pytest.raises(ValueError) :
+        SetOpacity(256).process(ref2) #Value error
+    
+    with pytest.raises(TypeError) :
+        SetOpacity(0.1).process(ref2) #Type error
+    
+    with pytest.raises(TypeError) :
+        SetOpacity("255").process(ref2) #Type error
